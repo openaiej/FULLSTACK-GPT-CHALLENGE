@@ -86,7 +86,7 @@ def verify_openai_key(api_key):
             messages=[{"role": "system", "content": "Ping"}]
         )
         return True  # 키가 유효하면 True 반환
-    except openai.AuthenticationError:
+    except client.AuthenticationError:
         return False  # 잘못된 키
     except Exception as e:
         st.error(f"⚠️ API 검증 중 오류 발생: {str(e)}")
