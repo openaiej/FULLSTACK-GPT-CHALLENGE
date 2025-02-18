@@ -119,6 +119,8 @@ Use this chatbot to ask questions to an AI about your files!
 Upload your api key on the sidebar.
 """
 )
+# ✅ 메인 화면을 동적으로 변경할 `st.empty()`
+main_content = st.empty()
 # ✅ `file` 변수를 미리 초기화 (이 부분 추가)
 file = None
 with st.sidebar:
@@ -132,7 +134,7 @@ with st.sidebar:
             st.session_state["openai_api_key"]=""
         else:
             st.success("✅ Valid OpenAI API Key!")
-            st.markdown(
+            main_content.markdown(
                 """
             Welcome!
                         
