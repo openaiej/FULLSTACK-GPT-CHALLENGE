@@ -73,20 +73,20 @@ def paint_history():
 def format_docs(docs):
     return "\n\n".join(document.page_content for document in docs)
 
-from openai import OpenAI
+import openai
 
 def verify_openai_key(api_key):
     """
     OpenAI API 키가 유효한지 확인하는 함수 (최신 버전 대응).
     """
     try:
-        client = OpenAI(api_key=api_key)  # ✅ 새로운 클라이언트 생성 방식
-        client.chat.completions.create(
+        openai.api_key = api_key  # ✅ API 키 설정
+        openai.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "system", "content": "Ping"}]
         )
         return True  # 키가 유효하면 True 반환
-    except client.AuthenticationError:
+    except openai.AuthenticationError:
         return False  # 잘못된 키
     except Exception as e:
         st.error(f"⚠️ API 검증 중 오류 발생: {str(e)}")
