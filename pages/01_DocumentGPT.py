@@ -119,7 +119,8 @@ Use this chatbot to ask questions to an AI about your files!
 Upload your api key on the sidebar.
 """
 )
-
+# ✅ `file` 변수를 미리 초기화 (이 부분 추가)
+file = None
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
     if openai_api_key:
@@ -137,7 +138,7 @@ with st.sidebar:
                         
             Use this chatbot to ask questions to an AI about your files!
 
-            Upload your files!.
+            Upload your files on the sidebar.
             """
             )
 
