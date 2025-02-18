@@ -87,7 +87,7 @@ def verify_openai_key(api_key):
             api_key=api_key
         )
         return True  # 키가 유효하면 True 반환
-    except openai.error.AuthenticationError:
+    except openai.AuthenticationError:
         return False  # 키가 유효하지 않으면 False 반환
     except Exception as e:
         st.error(f"API 검증 중 오류 발생: {str(e)}")
