@@ -37,7 +37,7 @@ else:
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
 # 파일을 임베딩하여 검색 가능한 벡터 저장소 생성
-@st.cache_data(show_spinner="Embedding file...")
+@st.cache_resource(show_spinner="Embedding file...")
 def embed_file(file):
     file_content = file.read()
     file_path = f"./.cache/files/{file.name}"
