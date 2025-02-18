@@ -9,6 +9,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.callbacks.base import BaseCallbackHandler
 import os
 import streamlit as st
+import openai
 st.set_page_config(
     page_title="DocumentGPT",
     page_icon="📃",
@@ -73,8 +74,6 @@ def paint_history():
 def format_docs(docs):
     return "\n\n".join(document.page_content for document in docs)
 
-import openai
-
 def verify_openai_key(api_key):
     """
     OpenAI API 키가 유효한지 확인하는 함수 (최신 버전 대응).
@@ -115,32 +114,19 @@ Welcome!
             
 Use this chatbot to ask questions to an AI about your files!
 
-Upload your files on the sidebar.
+Upload your api key on the sidebar.
 """
 )
 
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
-    
+    openai_api_key=verify_openai_key(openai_api_key)
     # API 키가 입력되지 않으면 파일 업로드를 막음
     if not openai_api_key:
         st.warning("⚠️ Please enter your OpenAI API Key to enable file upload.")
         file = None  # 파일 업로드 비활성화
     else:
         file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
-
-    # 📌 GitHub Repository 링크 추가
-    st.markdown(
-        """
-        ---
-        ### 🔗 Project Repository
-        [📂 GitHub Repository](https://github.com/openaiej/FULLSTACK-GPT-CHALLENGE.git)
-        """
-    )
-# OpenAI API 키 설정
-if openai_api_key:
-# API 키 검증
-    if verify_openai_key(openai_api_key):
         st.session_state["openai_api_key"] = openai_api_key
         llm = ChatOpenAI(
             temperature=0.1,
@@ -150,15 +136,29 @@ if openai_api_key:
             ],
             api_key=st.session_state["openai_api_key"]
         )
-        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-        file = st.file_uploader("📂 Upload a file", type=["pdf", "txt", "docx"])
-    else:
-        st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
-        file = None
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)        
+    # 📌 GitHub Repository 링크 추가
+    st.markdown(
+        """
+        ---
+        ### 🔗 Project Repository
+        [📂 GitHub Repository](https://github.com/openaiej/FULLSTACK-GPT-CHALLENGE.git)
+        """
+    )
 
+# API 키 검증
+if  not openai_api_key:
+    st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
+else:
+    st.markdown(
+            """
+        Welcome!
+                    
+        Use this chatbot to ask questions to an AI about your files!
 
-
-    
+        Upload your files on the sidebar.
+        """
+        )
 if file:
     retriever = embed_file(file)
     send_message("I'm ready! Ask away!", "ai", save=False)
