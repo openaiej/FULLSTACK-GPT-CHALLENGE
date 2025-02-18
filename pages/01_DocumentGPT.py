@@ -28,14 +28,6 @@ class ChatCallbackHandler(BaseCallbackHandler):
         self.message += token
         self.message_box.markdown(self.message)
 
-# OpenAI API 키를 명시적으로 전달
-openai_api_key = os.getenv("OPENAI_API_KEY") or st.session_state.get("openai_api_key")
-
-if not openai_api_key:
-    st.error("⚠️ OpenAI API 키가 없습니다. 사이드바에서 입력하세요.")
-else:
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-
 # 파일을 임베딩하여 검색 가능한 벡터 저장소 생성
 #@st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
@@ -110,9 +102,16 @@ Upload your files on the sidebar.
 )
 
 with st.sidebar:
-    file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
-        # 📌 GitHub Repository 링크 추가
+    
+    # API 키가 입력되지 않으면 파일 업로드를 막음
+    if not openai_api_key:
+        st.warning("⚠️ Please enter your OpenAI API Key to enable file upload.")
+        file = None  # 파일 업로드 비활성화
+    else:
+        file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
+
+    # 📌 GitHub Repository 링크 추가
     st.markdown(
         """
         ---
