@@ -134,9 +134,10 @@ with st.sidebar:
             st.session_state["openai_api_key"]=""
         else:
             st.success("✅ Valid OpenAI API Key!")
+            main_content = st.empty()
             main_content.markdown(
                 """
-            Welcome!
+            Valid OpenAI API Key!!
                         
             Use this chatbot to ask questions to an AI about your files!
 
