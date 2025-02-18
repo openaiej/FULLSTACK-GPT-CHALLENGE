@@ -1,7 +1,10 @@
 .env
 env/
 files/
+# .cache/ 내부 모든 파일 무시
 .cache/**/*
+# 하지만 모든 폴더는 무시하지 않음
+!.cache/
+!.cache/**/
+# 그리고 .gitkeep 파일은 무시하지 않음
 !.cache/**/.gitkeep
-
-
