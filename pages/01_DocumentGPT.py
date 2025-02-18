@@ -122,24 +122,26 @@ Upload your api key on the sidebar.
 
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
-    is_valid_key =verify_openai_key(openai_api_key)
-    # API 키가 입력되지 않으면 파일 업로드를 막음
-    if is_valid_key==False :
-        st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
-        file = None  # 파일 업로드 비활성화
-    else:
-        st.success("✅ Valid OpenAI API Key!")
-        file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
-        st.session_state["openai_api_key"] = openai_api_key
-        llm = ChatOpenAI(
-            temperature=0.1,
-            streaming=True,
-            callbacks=[
-                ChatCallbackHandler(),
-            ],
-            api_key=st.session_state["openai_api_key"]
-        )
-        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)        
+    if openai_api_key:
+        is_valid_key =verify_openai_key(openai_api_key)
+        # API 키가 입력되지 않으면 파일 업로드를 막음
+        if is_valid_key==False :
+            st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
+            file = None  # 파일 업로드 비활성화
+            st.session_state["openai_api_key"]=""
+        else:
+            st.success("✅ Valid OpenAI API Key!")
+            file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
+            st.session_state["openai_api_key"] = openai_api_key
+            llm = ChatOpenAI(
+                temperature=0.1,
+                streaming=True,
+                callbacks=[
+                    ChatCallbackHandler(),
+                ],
+                api_key=st.session_state["openai_api_key"]
+            )
+            embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)        
     # 📌 GitHub Repository 링크 추가
     st.markdown(
         """
