@@ -122,12 +122,13 @@ Upload your api key on the sidebar.
 
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
-    openai_api_key=verify_openai_key(openai_api_key)
+    is_valid_key =verify_openai_key(openai_api_key)
     # API 키가 입력되지 않으면 파일 업로드를 막음
-    if not openai_api_key:
-        st.warning("⚠️ Please enter your OpenAI API Key to enable file upload.")
+    if is_valid_key==False :
+        st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
         file = None  # 파일 업로드 비활성화
     else:
+        st.success("✅ Valid OpenAI API Key!")
         file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
         st.session_state["openai_api_key"] = openai_api_key
         llm = ChatOpenAI(
@@ -148,19 +149,6 @@ with st.sidebar:
         """
     )
 
-# API 키 검증
-if  not openai_api_key:
-    st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
-else:
-    st.markdown(
-            """
-        Welcome!
-                    
-        Use this chatbot to ask questions to an AI about your files!
-
-        Upload your files on the sidebar.
-        """
-        )
 if file:
     retriever = embed_file(file)
     send_message("I'm ready! Ask away!", "ai", save=False)
