@@ -73,7 +73,26 @@ def paint_history():
 def format_docs(docs):
     return "\n\n".join(document.page_content for document in docs)
 
+import openai
 
+def verify_openai_key(api_key):
+    """
+    OpenAI API 키가 유효한지 확인하는 함수.
+    """
+    try:
+        # 임의의 간단한 API 호출 (빈 메시지 전송)
+        openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "system", "content": "Ping"}],
+            api_key=api_key
+        )
+        return True  # 키가 유효하면 True 반환
+    except openai.error.AuthenticationError:
+        return False  # 키가 유효하지 않으면 False 반환
+    except Exception as e:
+        st.error(f"API 검증 중 오류 발생: {str(e)}")
+        return False
+    
 prompt = ChatPromptTemplate.from_messages(
     [
         (
@@ -121,16 +140,26 @@ with st.sidebar:
     )
 # OpenAI API 키 설정
 if openai_api_key:
-    st.session_state["openai_api_key"] = openai_api_key
-    llm = ChatOpenAI(
-        temperature=0.1,
-        streaming=True,
-        callbacks=[
-            ChatCallbackHandler(),
-        ],
-        api_key=st.session_state["openai_api_key"]
-    )
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+# API 키 검증
+    if verify_openai_key(openai_api_key):
+        st.session_state["openai_api_key"] = openai_api_key
+        llm = ChatOpenAI(
+            temperature=0.1,
+            streaming=True,
+            callbacks=[
+                ChatCallbackHandler(),
+            ],
+            api_key=st.session_state["openai_api_key"]
+        )
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+        file = st.file_uploader("📂 Upload a file", type=["pdf", "txt", "docx"])
+    else:
+        st.error("❌ Invalid OpenAI API Key! Please enter a valid key.")
+        file = None
+
+
+
+    
 if file:
     retriever = embed_file(file)
     send_message("I'm ready! Ask away!", "ai", save=False)
