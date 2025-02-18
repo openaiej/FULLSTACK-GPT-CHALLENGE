@@ -104,6 +104,14 @@ Upload your files on the sidebar.
 with st.sidebar:
     file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
     api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
+        # 📌 GitHub Repository 링크 추가
+    st.markdown(
+        """
+        ---
+        ### 🔗 Project Repository
+        [📂 GitHub Repository](https://github.com/openaiej/FULLSTACK-GPT-CHALLENGE.git)
+        """
+    )
 # OpenAI API 키 설정
 if api_key:
     st.session_state["openai_api_key"] = api_key
