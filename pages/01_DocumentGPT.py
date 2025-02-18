@@ -7,6 +7,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
 from langchain.chat_models import ChatOpenAI
 from langchain.callbacks.base import BaseCallbackHandler
+import os
 import streamlit as st
 st.set_page_config(
     page_title="DocumentGPT",
@@ -27,6 +28,14 @@ class ChatCallbackHandler(BaseCallbackHandler):
         self.message += token
         self.message_box.markdown(self.message)
 
+# OpenAI API 키를 명시적으로 전달
+openai_api_key = os.getenv("OPENAI_API_KEY") or st.session_state.get("openai_api_key")
+
+if not openai_api_key:
+    st.error("⚠️ OpenAI API 키가 없습니다. 사이드바에서 입력하세요.")
+else:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+
 # 파일을 임베딩하여 검색 가능한 벡터 저장소 생성
 @st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
@@ -43,7 +52,6 @@ def embed_file(file):
     )
     loader = UnstructuredFileLoader(file_path)
     docs = loader.load_and_split(text_splitter=splitter)
-    embeddings = OpenAIEmbeddings()
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
     vectorstore = FAISS.from_documents(docs, cached_embeddings)
     retriever = vectorstore.as_retriever()
@@ -103,7 +111,7 @@ Upload your files on the sidebar.
 
 with st.sidebar:
     file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
-    api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
+    openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
         # 📌 GitHub Repository 링크 추가
     st.markdown(
         """
@@ -113,8 +121,8 @@ with st.sidebar:
         """
     )
 # OpenAI API 키 설정
-if api_key:
-    st.session_state["openai_api_key"] = api_key
+if openai_api_key:
+    st.session_state["openai_api_key"] = openai_api_key
     llm = ChatOpenAI(
         temperature=0.1,
         streaming=True,
@@ -123,6 +131,7 @@ if api_key:
         ],
         api_key=st.session_state["openai_api_key"]
     )
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 if file:
     retriever = embed_file(file)
     send_message("I'm ready! Ask away!", "ai", save=False)
@@ -130,7 +139,7 @@ if file:
     message = st.chat_input("Ask anything about your file...")
     
     if message:
-        if api_key is None or api_key.strip() == "":
+        if openai_api_key is None or openai_api_key.strip() == "":
             st.error("⚠️ OpenAI API 키를 입력하세요.")
         else:
             send_message(message, "human")
