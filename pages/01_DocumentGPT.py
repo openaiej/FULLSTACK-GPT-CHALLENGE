@@ -131,6 +131,16 @@ with st.sidebar:
             st.session_state["openai_api_key"]=""
         else:
             st.success("✅ Valid OpenAI API Key!")
+            st.markdown(
+                """
+            Welcome!
+                        
+            Use this chatbot to ask questions to an AI about your files!
+
+            Upload your files!.
+            """
+            )
+
             file = st.file_uploader("Upload a file", type=["pdf", "txt", "docx"])
             st.session_state["openai_api_key"] = openai_api_key
             llm = ChatOpenAI(
