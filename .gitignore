@@ -1,6 +1,7 @@
 .env
 env/
 files/
+.streamlit/
 # .cache/ 내부 모든 파일 무시
 .cache/**/*
 # 하지만 모든 폴더는 무시하지 않음
