@@ -134,7 +134,6 @@ with st.sidebar:
             st.session_state["openai_api_key"]=""
         else:
             st.success("✅ Valid OpenAI API Key!")
-            main_content = st.empty()
             main_content.markdown(
                 """
             Valid OpenAI API Key!!

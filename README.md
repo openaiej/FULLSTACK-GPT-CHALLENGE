@@ -3,3 +3,4 @@
 
 # 자동으로 requirements.txt 생성
 pip freeze > requirements.txt
+Python 프로세스 종료 (taskkill /F /IM python.exe)
