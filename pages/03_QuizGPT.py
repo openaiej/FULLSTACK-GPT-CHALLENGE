@@ -185,7 +185,14 @@ with st.sidebar:
                 topic = st.text_input("Search Wikipedia...")
                 if topic:
                     docs = wiki_search(topic)
-
+        # 📌 GitHub Repository 링크 추가
+        st.markdown(
+            """
+            ---
+            ### 🔗 Project Repository
+            [📂 GitHub Repository](https://github.com/openaiej/FULLSTACK-GPT-CHALLENGE.git)
+            """
+        )
 
 # 퀴즈 생성 여부 판단
 if not docs:
