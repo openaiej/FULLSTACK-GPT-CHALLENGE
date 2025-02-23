@@ -138,7 +138,7 @@ def verify_openai_key(api_key):
 
 docs = None
 topic = None
-difficulty="상"
+difficulty="Hard"
 # 사이드바 UI
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password")
@@ -164,7 +164,7 @@ with st.sidebar:
             )
             difficulty = st.selectbox(
                 "난이도를 선택하세요",
-                ("상", "중", "하"),
+                ("Hard", "Medium", "Easy"),
                 index=0,
                 placeholder="Select",
             )
